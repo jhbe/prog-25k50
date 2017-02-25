@@ -103,4 +103,15 @@ directory in this repo. This will trigger Windows to read the prog.inf file and 
 the information within configure the Prog hardware as a generic USB device. Once
 successful, the Prog-Win command line utility is used to work with the programmer.
 
+# Limitations
+
+There is currently no support for programming data EEPROM (read: semi-static RAM). There's no technical reason for why it could not be added, I just never needed it.
+
+# Known Issues
+
+Sometimes, and in particular with long (>100mm) leads between the programmer and the chip to be programmed, the verification step may fail. Another try often helps. Shorter leads does too.
+
+# TODO
+
+* Support for data EEPROM.
 
