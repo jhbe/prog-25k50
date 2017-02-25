@@ -28,16 +28,74 @@ The following PICs have been tested:
     * PIC18F2550
     * PIC18F4550
     * PIC18F25K50
+    * PIC18F1330
 * PIC32MX
     * PIC32MX150F128
     * PIC32MX220F032
     * PIC32MX250F128
 
-...but any device using any of the three programming specifications should work. The specifications are Microchip documents:
+...but any device using any of the five programming specifications should work. The specifications are Microchip documents:
 
 * PIC16: DS41196E "PIC16F6xx/A EEPROM Programming Specification". This firmware implements the high-voltage In-Circuit Serial Programming (ICSP) specification.
-* PIC18: DS39622F "Flash Microcontroller Programming Specification". This firmware implements the high-voltage In-Circuit Serial Programming (ICSP) specification.
+* PIC18: DS39622F "Flash Microcontroller Programming Specification", DS41630B (with the same title) and DS39752B (with the same title). This firmware implements the high-voltage In-Circuit Serial Programming (ICSP) specification.
 * PIC32: DS66145J "PIC32MX Flash Programming Specification". This firmware implements the 4-wire JTAG interface (not the 2-wire In-Circuit Serial Programming (ICSP) specification).
+
+The following devices are covered by the specs:
+
+* PIC16F627A
+* PIC16LF627A
+* PIC16F628A
+* PIC16LF628A
+* PIC16F648A
+* PIC16LF648A
+* PIC18F1230
+* PIC18F1330
+* PIC18F2221
+* PIC18F2321
+* PIC18F2410
+* PIC18F2420
+* PIC18F2450
+* PIC18F24K50
+* PIC18LF24K50
+* PIC18F2455
+* PIC18F2480
+* PIC18F2510
+* PIC18F2515
+* PIC18F2520
+* PIC18F2525
+* PIC18F2550
+* PIC18F25K50
+* PIC18LF25K50
+* PIC18F2580
+* PIC18F2585
+* PIC18F2610
+* PIC18F2620
+* PIC18F26K50
+* PIC18LF26K50
+* PIC18F2680
+* PIC18F4221
+* PIC18F4321
+* PIC18F4410
+* PIC18F4420
+* PIC18F4450
+* PIC18F45K50
+* PIC18F4455
+* PIC18F4480
+* PIC18F4510
+* PIC18F4515
+* PIC18F4520
+* PIC18F4525
+* PIC18F4550
+* PIC18LF45K50
+* PIC18F4580
+* PIC18F4585
+* PIC18F4610
+* PIC18F4620
+* PIC18F46K50
+* PIC18LF46K50
+* PIC18F4680
+* All PIC32MX devices
+
 
 # Build
 
