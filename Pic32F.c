@@ -1,37 +1,34 @@
-//===========================================================================
-//
-// Name
-//   Pic32
-//
-// Description
-//   This is the firmware for the 18f2550 chip allowing it to program a
-//   PIC32MX2xx (and others).
-//
-//   The programming specification is Microchip document DS66145J titled
-//   "PIC32MX Flash Programming Specification". This firmware
-//   implements the 4-wire JTAG interface (not the 2-wire In-Circuit Serial
-//   Programming (ICSP) specification).
-//
-//   The following table illustrate how pins on the 18f2550 should be
-//   connected to the target (a pic32mx___):
-//
-//                          18f2550 | target
-//                          ================
-//                            RB5   |  MCLR
-//                            RB4   |  TMS
-//                            RB2   |  TDO
-//                            RB1   |  TCK
-//                            RB0   |  TDI
-//
-//   
-//
-//===========================================================================
-#include <p18cxxx.h>
-#include <delays.h>
-#include "Tap.h"
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ * 
+ * This is the firmware for the 18f2550 chip allowing it to program a
+ * PIC32MX2xx (and others).
+ *
+ * The programming specification is Microchip document DS66145J titled
+ * "PIC32MX Flash Programming Specification". This firmware
+ * implements the 4-wire JTAG interface (not the 2-wire In-Circuit Serial
+ * Programming (ICSP) specification).
+ *
+ * The following table illustrate how pins on the 18f2550 should be
+ * connected to the target (a pic32mx___):
+ *
+ *                        18f2550 | target
+ *                        ================
+ *                          RB5   |  MCLR
+ *                          RB4   |  TMS
+ *                          RB2   |  TDO
+ *                          RB1   |  TCK
+ *                          RB0   |  TDI
+ */
+#include <xc.h>
 #include "Pins.h"
+#include "Tap.h"
 #include "Usb.h"
 #include "Commands.h"
+#include "Delays.h"
 
 #define NVMCON_OFFSET       0x00
 #define NVMCONCLR_OFFSET    0x04
@@ -68,20 +65,7 @@ void DeallocateOutputPins32(void)
 }
 
 //---------------------------------------------------------------------------
-// Delay1ms
-//---------------------------------------------------------------------------
-void Delay1ms(void)
-{
-	//
-	// 48 / 4 = 12 cycles per us gives 12000 cycles per 1 ms.
-	//
-	Delay1KTCYx(12);
-}
-
-//---------------------------------------------------------------------------
 // ProcessorAccess
-//
-// 
 //---------------------------------------------------------------------------
 unsigned long ProcessorAccess(unsigned long in_data, unsigned char is_an_instruction)
 {
@@ -210,7 +194,7 @@ void CheckDevice(void)
 		words[1] = number_of_attempts;
 		SendDebug((unsigned char *)words, 2);
 */
-		Delay10KTCYx(120);
+		Delayms(100);
 		number_of_attempts++;
 	}
 	
@@ -223,7 +207,7 @@ void CheckDevice(void)
 void ChipErase(void)
 {
 	unsigned char mchp_status;
-	unsigned char number_of_attempts;
+	unsigned char number_of_attempts = 0;
 	
 	//
 	// Select the MTAP, tell it to expect a command and issue an ERASE
@@ -240,10 +224,9 @@ void ChipErase(void)
 	MCLR = 1;
 
 	//
-	// Now we give the erase command time to finish.
-	// 48 / 4 = 12 cycles per us gives 12000 cycles per 1 ms.
+	// Now we give the erase command 1 ms to finish.
 	//
-	Delay1KTCYx(12);
+	Delayms(1);
 
 	//
 	// Then we read the STATUS register and wait until FCBUSY == 0 and
@@ -252,7 +235,7 @@ void ChipErase(void)
 	while (mchp_status = XferData8(MCHP_STATUS),
 		   ((mchp_status & MCHP_STATUS_FCBUSY) || !(mchp_status & MCHP_STATUS_CFGRDY)) && number_of_attempts < 200)
 	{
-		Delay10KTCYx(120);
+		Delayms(100);
 		number_of_attempts++;
 	}
 
@@ -333,9 +316,6 @@ void Set(unsigned char offset, unsigned long value)
 //---------------------------------------------------------------------------
 unsigned long ExecuteNVM(unsigned long mop, unsigned long address, unsigned long data, unsigned long src_address)
 {
-	unsigned long words[16];
-	unsigned long control;
-
 	//
 	// a0 = 1f80f400
 	// a1 = ff200004
@@ -557,7 +537,7 @@ void ExitProgrammingMode(void)
     // as soon as we release MCLR.
 	//
 	MCLR = 0;
-	Delay1ms();
+	Delayms(1);
     DeallocateOutputPins32();
 	MCLR = 1;
 	

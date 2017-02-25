@@ -1,31 +1,24 @@
-//===========================================================================
-//
-// Name
-//   Usb
-//
-// Description
-//
-//===========================================================================
-#include <p18cxxx.h>
-#include <usb/usb.h>
-#include <usb/usb_function_generic.h>
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+#include <xc.h>
+#include <usb.h>
+#include "usb_device.h"
+#include "usb_device_generic.h"
 
-#include "Usb.h"
+uint8_t out_packet[USBGEN_EP_SIZE] @ 0x500;
+uint8_t in_packet[USBGEN_EP_SIZE] @ 0x540;
 
-#pragma udata USB_VARIABLES=0x500
-
-unsigned char out_packet[USBGEN_EP_SIZE];
-unsigned char in_packet[USBGEN_EP_SIZE];
-
-#pragma udata
 USB_HANDLE out_handle = 0;
 USB_HANDLE in_handle = 0;
-#pragma udata
 
 //---------------------------------------------------------------------------
 // USER_USB_CALLBACK_EVENT_HANDLER
 //---------------------------------------------------------------------------
-BOOL USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, WORD size)
+bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size)
 {
     switch(event)
     {
@@ -38,7 +31,7 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, WORD size)
 			//
 			// Get a handle to the input ("out" from the host perspective).
 			//
-			out_handle = USBGenRead(USBGEN_EP_NUM, (BYTE*)&out_packet, USBGEN_EP_SIZE);
+			out_handle = USBGenRead(USBGEN_EP_NUM, out_packet, USBGEN_EP_SIZE);
             break;
             
         case EVENT_TRANSFER:
@@ -54,7 +47,7 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, WORD size)
         default:
             break;
     }      
-    return TRUE; 
+    return true; 
 }
 
 //---------------------------------------------------------------------------
@@ -72,7 +65,7 @@ void SendOk(void)
 	in_packet[0] = 'O';
 	in_packet[1] = 'K';
 
-	in_handle = USBGenWrite(USBGEN_EP_NUM, (BYTE*)&in_packet, 2);
+	in_handle = USBGenWrite(USBGEN_EP_NUM, in_packet, 2);
 	while(USBHandleBusy(in_handle))
 	{
 		USBDeviceTasks();
@@ -96,7 +89,7 @@ void SendFail(void)
 	in_packet[2] = 'I';
 	in_packet[3] = 'L';
 
-	in_handle = USBGenWrite(USBGEN_EP_NUM, (BYTE*)&in_packet, 4);
+	in_handle = USBGenWrite(USBGEN_EP_NUM, in_packet, 4);
 	while(USBHandleBusy(in_handle))
 	{
 		USBDeviceTasks();
@@ -117,7 +110,7 @@ void SendResult8(unsigned char result)
 
 	in_packet[0] = result;
 
-	in_handle = USBGenWrite(USBGEN_EP_NUM, (BYTE*)&in_packet, 1);
+	in_handle = USBGenWrite(USBGEN_EP_NUM, in_packet, 1);
 	while(USBHandleBusy(in_handle))
 	{
 		USBDeviceTasks();
@@ -164,7 +157,7 @@ void SendDebug(unsigned char *data, unsigned char length)
 		in_packet[4 + i] = data[i];
 	}	
 
-	in_handle = USBGenWrite(USBGEN_EP_NUM, (BYTE*)&in_packet, 4 + length);
+	in_handle = USBGenWrite(USBGEN_EP_NUM, in_packet, 4 + length);
 	while(USBHandleBusy(in_handle))
 	{
 		USBDeviceTasks();
@@ -221,7 +214,7 @@ void SendInPacket(unsigned char *bytes, unsigned char length)
 		in_packet[i] = bytes[i];
 	}	
 
-	in_handle = USBGenWrite(USBGEN_EP_NUM, (BYTE*)&in_packet, length);
+	in_handle = USBGenWrite(USBGEN_EP_NUM, in_packet, length);
 
 	while(USBHandleBusy(in_handle))
 	{

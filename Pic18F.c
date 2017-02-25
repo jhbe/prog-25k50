@@ -1,35 +1,33 @@
-//===========================================================================
-//
-// Name
-//   Pic18
-//
-// Description
-//   This is the firmware for the 18f2550 chip allowing it to program another
-//   18f2550 (and others). It communicates with a PC over USB.
-//
-//   The programming specification is Microchip document DS39622F titled
-//   "Flash Microcontroller Programming Specification". This firmware
-//   implements the high-voltage In-Circuit Serial Programming (ICSP)
-//   specification.
-//
-//   The following table illustrate how pins on the 18f2550 should be
-//   connected to the target (another 18f2550):
-//
-//                          18f2550 | target
-//                          ================
-//                            RB3   |  MCLR
-//                            RB2   |  VDD
-//                            RB1   |  PGD
-//                            RB0   |  PGC
-//
-//   
-//
-//===========================================================================
-#include <p18cxxx.h>
-#include <delays.h>
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ * 
+ * This is the firmware for the 18f2550 chip allowing it to program another
+ * 18f2550 (and others). It communicates with a PC over USB.
+ *
+ * The programming specification is Microchip document DS39622F titled
+ * "Flash Microcontroller Programming Specification". This firmware
+ * implements the high-voltage In-Circuit Serial Programming (ICSP)
+ * specification.
+ *
+ * The following table illustrate how pins on the 18f2550 should be
+ * connected to the target (another 18f2550). Note that the MCLR signal is
+ * routed through a MAX680 to boost the voltage.
+ * 
+ *                        18f2550 | target
+ *                        ================
+ *                          RB3   |  MCLR
+ *                          RB2   |  VDD
+ *                          RB1   |  PGD
+ *                          RB0   |  PGC
+ */
+#include <xc.h>
 #include "Pins.h"
 #include "Usb.h"
 #include "Commands.h"
+#include "Delays.h"
 
 //
 // These are (some of) the four bit commands sent to a device when
@@ -40,28 +38,6 @@
 #define TABLE_WRITE						0x0c
 #define TABLE_WRITE_POSTINC				0x0d
 #define TABLE_WRITE_START_PROGRAM		0x0f
-
-//---------------------------------------------------------------------------
-// Wait2ms
-//---------------------------------------------------------------------------
-void Wait2ms(void)
-{
-	//
-	// 48 / 4 = 12 cycles per us gives 24000 cycles per 2 ms.
-	//
-	Delay1KTCYx(24);
-}
-
-//---------------------------------------------------------------------------
-// Wait6ms
-//---------------------------------------------------------------------------
-void Wait6ms(void)
-{
-	//
-	// 48 / 4 = 12 cycles per us gives 72000 cycles per 6 ms.
-	//
-	Delay1KTCYx(72);
-}
 
 //---------------------------------------------------------------------------
 // WriteCommand (Send4Bits)
@@ -158,9 +134,9 @@ void WriteProgrammingCore(void)
 	}
 	
 	PGC = 1;
-	Wait2ms();
+	Delayms(2);
 	PGC = 0;
-	Wait2ms();
+	Delayms(2);
 }
 
 //---------------------------------------------------------------------------
@@ -339,7 +315,7 @@ void Erase(void)
 	// and the 16 bit argument.
 	//
 	WriteCommand(CORE);
-	Wait6ms();
+	Delayms(6);
 	WriteByte(0);
 	WriteByte(0);
 	

@@ -1,23 +1,20 @@
-//===========================================================================
-//
-// Name
-//   Tap
-//
-// Description
-//
-//===========================================================================
-#include <delays.h>
-#include <p18cxxx.h>
-#include "tap.h"
-#include "pins.h"
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+#include <xc.h>
+#include "Tap.h"
+#include "Pins.h"
+#include "Delays.h"
 
 //---------------------------------------------------------------------------
 // Delay
 //---------------------------------------------------------------------------
 void Delay(void)
 {
-	Delay1TCY();
-//	Delay10TCYx(1);
+	Delayus(1);
 }
 
 //---------------------------------------------------------------------------

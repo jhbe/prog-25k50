@@ -1,35 +1,33 @@
-//===========================================================================
-//
-// Name
-//   Pic16
-//
-// Description
-//   This is the firmware for the 18f2550 chip allowing it to program a
-//   16f6x8A. It communicates with a PC over USB.
-//
-//   The programming specification is Microchip document DS41196E titled
-//   "PIC16F6xx/A EEPROM Programming Specification". This firmware
-//   implements the high-voltage In-Circuit Serial Programming (ICSP)
-//   specification.
-//
-//   The following table illustrate how pins on the 18f2550 should be
-//   connected to the target (it is the same as for the PIC18):
-//
-//                          18f2550 | target
-//                          ================
-//                            RB3   |  MCLR
-//                            RB2   |  VDD
-//                            RB1   |  PGD
-//                            RB0   |  PGC
-//
-//   
-//
-//===========================================================================
-#include <p18cxxx.h>
-#include <delays.h>
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ * 
+ * This is the firmware for the 18f2550 chip allowing it to program a
+ * 16f6x8A. It communicates with a PC over USB.
+ *
+ * The programming specification is Microchip document DS41196E titled
+ * "PIC16F6xx/A EEPROM Programming Specification". This firmware
+ * implements the high-voltage In-Circuit Serial Programming (ICSP)
+ * specification.
+ *
+ * The following table illustrate how pins on the 18f2550 should be
+ * connected to the target (it is the same as for the PIC18). Note that the MCLR
+ * signal is routed through a MAX680 to boost the voltage.
+ *
+ *                        18f2550 | target
+ *                        ================
+ *                          RB3   |  MCLR
+ *                          RB2   |  VDD
+ *                          RB1   |  PGD
+ *                          RB0   |  PGC
+ */
+#include <xc.h>
 #include "Pins.h"
 #include "Usb.h"
 #include "Commands.h"
+#include "Delays.h"
 
 //
 // These are the six bit commands sent to a device when
@@ -48,65 +46,17 @@
 unsigned short int g_current_address = 0x0000;
 
 //---------------------------------------------------------------------------
-// Delay100ns
-//---------------------------------------------------------------------------
-void Delay100ns(void)
-{
-    //
-    // 12 instructions per us gives 80ns per instruction. So two NOPs will do.
-    //
-    _asm
-        nop
-        nop
-    _endasm
-}
-
-//---------------------------------------------------------------------------
-// Delay1us
-//---------------------------------------------------------------------------
-void Delay1us(void)
-{
-    //
-    // 12 instructions per us.
-    //
-	Delay10TCYx(2);
-}
-
-//---------------------------------------------------------------------------
-// Delay2ms
-//---------------------------------------------------------------------------
-void Delay2ms(void)
-{
-	//
-	// 48 / 4 = 12 cycles per us gives 24000 cycles per 2 ms.
-	//
-	Delay1KTCYx(24);
-}
-
-//---------------------------------------------------------------------------
-// Delay10ms
-//---------------------------------------------------------------------------
-void Delay10ms(void)
-{
-	//
-	// 48 / 4 = 12 cycles per us gives 120000 cycles per 10 ms.
-	//
-	Delay1KTCYx(120);
-}
-
-
-//---------------------------------------------------------------------------
 // WriteCommand (Send6Bits)
 //
 // Pulses the PGC six times, each time holding PGD according to the lsb of
 // the "command", then shifting "command" to the right. This has the effect of
 // sending the 6 lowest bits in "commamd" lsb first.
 //---------------------------------------------------------------------------
-void WriteCommand16(UINT8 command)
+void WriteCommand16(uint8_t command)
 {
     unsigned char number_of_bits = 6;
 
-    Delay1us();
+    Delayus(1);
 
     do
 	{
@@ -123,13 +73,13 @@ void WriteCommand16(UINT8 command)
 //---------------------------------------------------------------------------
 // WriteWord
 //---------------------------------------------------------------------------
-void WriteWord16(UINT16 word)
+void WriteWord16(uint16_t word)
 {
 	unsigned char number_of_bits = 16;
 
     word <<= 1;
     
-    Delay1us();
+    Delayus(1);
 
     do
 	{
@@ -146,12 +96,12 @@ void WriteWord16(UINT16 word)
 //---------------------------------------------------------------------------
 // ReadWord
 //---------------------------------------------------------------------------
-UINT16 ReadWord16(void)
+uint16_t ReadWord16(void)
 {
-	UINT16 word = 0;
+	uint16_t word = 0;
 	unsigned char i;
 	
-    Delay1us();
+    Delayus(1);
 
     //
     // The 16F will go OUTPUT after the second raising clock edge.
@@ -197,13 +147,13 @@ void ResetDevice16(void)
     VDD = 0;
     VPP = 0;
 
-    Delay2ms();
+    Delayms(2);
 
     VPP = 1;
-    Delay2ms();
+    Delayms(2);
 
     VDD = 1;
-    Delay2ms();
+    Delayms(2);
 
     g_current_address = 0x0000;
 }
@@ -216,7 +166,7 @@ void ResetDevice16(void)
 // command is issued. Then a number of INCREMENT_ADDRESS commands are issued
 // until the address is right.
 //---------------------------------------------------------------------------
-void SetPC16(UINT16 address)
+void SetPC16(uint16_t address)
 {
     if (address < g_current_address)
     {
@@ -250,10 +200,10 @@ void Erase16(void)
     WriteWord16(0x3fff);
 
     WriteCommand16(BULK_ERASE_PROGRAM_MEMORY);
-    Delay10ms();
+    Delayms(10);
 
     WriteCommand16(BULK_ERASE_DATA_MEMORY);
-    Delay10ms();
+    Delayms(10);
 
 	SendOk();
 }
@@ -261,9 +211,9 @@ void Erase16(void)
 //---------------------------------------------------------------------------
 // ProgramBytes
 //---------------------------------------------------------------------------
-void ProgramBytes16(UINT16 address,
-				    UINT8 *bytes,
-				    UINT8 length)
+void ProgramBytes16(uint16_t address,
+				    uint8_t *bytes,
+				    uint8_t length)
 {
 	unsigned char i;
 
@@ -271,13 +221,13 @@ void ProgramBytes16(UINT16 address,
 
 	for (i = 0; i < length; i += 2)
 	{
-        UINT word = (((UINT)(bytes[i + 1])) << 8) | (UINT)(bytes[i]);
+        uint16_t word = (((uint16_t)(bytes[i + 1])) << 8) | (uint16_t)(bytes[i]);
 
 		WriteCommand16(LOAD_DATA_FOR_PROGRAM_MEMORY);
 		WriteWord16(word);
 
         WriteCommand16(BEGIN_PROGRAMMING_CYCLE);
-        Delay10ms();
+        Delayms(10);
 
         WriteCommand16(INCREMENT_ADDRESS);
         g_current_address++;
@@ -289,10 +239,8 @@ void ProgramBytes16(UINT16 address,
 //---------------------------------------------------------------------------
 // ProgramConfigWord16
 //---------------------------------------------------------------------------
-void ProgramConfigWord16(UINT16 word)
+void ProgramConfigWord16(uint16_t word)
 {
-    unsigned char i;
-
     WriteCommand16(LOAD_CONFIGURATION);
     WriteWord16(0x0000);
 
@@ -308,7 +256,7 @@ void ProgramConfigWord16(UINT16 word)
     WriteCommand16(LOAD_DATA_FOR_PROGRAM_MEMORY);
     WriteWord16(word);
     WriteCommand16(BEGIN_PROGRAMMING_CYCLE);
-    Delay10ms();
+    Delayms(10);
 
     SendOk();
 }
@@ -316,8 +264,8 @@ void ProgramConfigWord16(UINT16 word)
 //---------------------------------------------------------------------------
 // ReadBytes
 //---------------------------------------------------------------------------
-void ReadBytes16(UINT16 address,
-			     UINT8 length)
+void ReadBytes16(uint16_t address,
+			     uint8_t length)
 {
 	unsigned char bytes[64];
 	unsigned char i = 0;
@@ -329,7 +277,7 @@ void ReadBytes16(UINT16 address,
 	//
 	for (i = 0; i < length; i = i + 2)
 	{
-        UINT16 word;
+        uint16_t word;
         
         WriteCommand16(READ_DATA_FROM_PROGRAM_MEMORY);
 		word = ReadWord16();
@@ -349,7 +297,7 @@ void ReadBytes16(UINT16 address,
 //---------------------------------------------------------------------------
 void ProcessMessage16(unsigned char *message, unsigned char length)
 {
-    UINT16 address, word;
+    uint16_t address, word;
 
 	switch (message[0])
 	{
@@ -373,17 +321,17 @@ void ProcessMessage16(unsigned char *message, unsigned char length)
 		break;
 		
 	case COMMAND_PROGRAM_BYTES_16:
-        address = ((UINT16)(message[1]) << 8) | (UINT16)(message[2]);
+        address = ((uint16_t)(message[1]) << 8) | (uint16_t)(message[2]);
 		ProgramBytes16(address, &message[3], length - 3);
 		break;
 		
 	case COMMAND_PROGRAM_CONFIG_16:
-        word = ((UINT16)(message[1])) | ((UINT16)(message[2]) << 8);
+        word = ((uint16_t)(message[1])) | ((uint16_t)(message[2]) << 8);
 		ProgramConfigWord16(word);
 		break;
 		
 	case COMMAND_READ_BYTES_16:
-        address = ((UINT16)(message[1]) << 8) | (UINT16)(message[2]);
+        address = ((uint16_t)(message[1]) << 8) | (uint16_t)(message[2]);
 		ReadBytes16(address, message[3]);
 		break;
 	}

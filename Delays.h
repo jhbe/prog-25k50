@@ -4,21 +4,12 @@
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
  */
-#ifndef SYSTEM_CONFIG_H
-#define	SYSTEM_CONFIG_H
+#ifndef DELAYS_H
+#define	DELAYS_H
 
-#include "usb_config.h"
+void Delay100ns(void);
+void Delayus(int us);
+void Delayms(int ms);
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
-
-#endif	/* SYSTEM_CONFIG_H */
+#endif	/* DELAYS_H */
 

@@ -1,21 +1,17 @@
-//===========================================================================
-//
-// Name
-//   usb_descriptors.c
-//
-// Description
-//   
-//===========================================================================
-#include <p18cxxx.h>
-#include "usb/usb.h"
-#define ROM rom
-#pragma romdata
+/*
+ * Copyright (C) 2017 Johan Bergkvist
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+#include <xc.h>
+#include <usb.h>
 
 //===========================================================================
 // Device Descriptor
 //===========================================================================
 
-ROM USB_DEVICE_DESCRIPTOR device_dsc = {
+const USB_DEVICE_DESCRIPTOR device_dsc = {
     0x12,                   // Size of this descriptor in bytes
     USB_DESCRIPTOR_DEVICE,  // DEVICE descriptor type
     0x0200,                 // USB Spec Release Number in BCD format        
@@ -36,7 +32,7 @@ ROM USB_DEVICE_DESCRIPTOR device_dsc = {
 // Configuration Descriptor
 //===========================================================================
 
-ROM BYTE config_descriptor[] = {
+const uint8_t config_descriptor[] = {
     //
     // Configuration Descriptor
     //
@@ -90,35 +86,35 @@ ROM BYTE config_descriptor[] = {
 //
 // Language code string descriptor
 //
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[1];}sd000 = {
+const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[1];}sd000 = {
 sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409}};
 
 //
 // Manufacturer string descriptor
 //
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[4];}sd001 = {
+const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[4];}sd001 = {
 sizeof(sd001),USB_DESCRIPTOR_STRING,
 {'J','H','B','E'}};
 
 //
 // Product string descriptor
 //
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[17];}sd002 = {
+const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[17];}sd002 = {
 sizeof(sd002),USB_DESCRIPTOR_STRING,
 {'P','r','o','g',' ','1','6','/','1','8','/','3','2',' ','U','S','B'}};
 
 //
 // Array of configuration descriptors
 //
-ROM BYTE *ROM USB_CD_Ptr[] = {
-    (ROM BYTE *ROM)&config_descriptor
+const uint8_t *const USB_CD_Ptr[] = {
+    (const uint8_t *const)config_descriptor
 };
 
 //
 // Array of string descriptors
 //
-ROM BYTE *ROM USB_SD_Ptr[] = {
-    (ROM BYTE *ROM)&sd000,
-    (ROM BYTE *ROM)&sd001,
-    (ROM BYTE *ROM)&sd002
+const uint8_t *const USB_SD_Ptr[] = {
+    (const uint8_t *const)&sd000,
+    (const uint8_t *const)&sd001,
+    (const uint8_t *const)&sd002
 };
