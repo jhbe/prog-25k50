@@ -5,7 +5,7 @@ This is the PIC18F25K50 firmware for Prog, a programmer for selected Microchip P
     +----------------+       +-------------+        +------------------------------+
     | Windows PC     |       | Programmer  |--Vdd-->| PIC16/18/32 to be programmed |
     |                |       |             |--Gnd-->|                              |
-    |  prog-win.exe <---USB->| PIC25K50     |<-PGD-->|                              |
+    |  prog-win.exe <---USB->| PIC25K50    |<-PGD-->|                              |
     |                |       | MAX680      |--PGC-->|                              |
     +----------------+       +-------------+  etc.. +------------------------------+
 
@@ -13,8 +13,65 @@ Note that the picture above illustrates the Prog chicken-and-egg problem; withou
 
 # Build
 
-This repo is configured for MPLAB-X v3.55 (the free IDE from microchip) and XC v1.41 (a C compiler with a free option). It uses the Microchip MCC.
+This repo is configured for MPLAB-X v3.55 (the free IDE from Microchip) and XC v1.41 (a C compiler with a free option). It uses the Microchip MCC v1.35.
+
+# Pins
+
+The pins to connect to the device to be programmed are (in addition to GND):
+
+|  Pin   |  PIC16 and PIC18  |  PIC32  |
+| ------ | ----------------- | ------- |
+|  RB5   |                   |  MCLR   |
+|  RB4   |                   |  TMS    |
+|  RB3   |  Vpp              |         |
+|  RB2   |  Vdd              |  TDO    |
+|  RB1   |  PDG              |  TCK    |
+|  RB0   |  PGC              |  TDI    |
 
 # Circuit
 
-## Pins
+The PIC18F25K50 connects to the PC over a USB cable. A MAX680 is used to pump
+a 5V supply to the required Vpp 10V for PIC16 and PIC18. Only half of the MAX680
+is used; there's no need for a -10V.
+
+For pure PIC32 programming the MAX680 and associated circuitry can be omitted.
+
+Various bypass caps are not shown below; see the PIC18F25K50 documentation.
+
+C1 is 0.22 uF. C2 and C3 are 4.7uF.
+
+                                             +------------------+
+                                             |                  |
+                                        C2 =====     MAX680     |
+                                             |     +---------+  |
+              PIC18F25K50                    +-----|         |-----------+-> Vpp
+              +----------+                         |         |--+        |
+              |          |                         |         |---+--+    |
+              |          |                         |         |-+ |  |    |
+              |       B5 |--> MCLR                 +---------+ | |  |  ===== C3
+              |       B4 |--> TMS                              | |  +----+
+              |       B3 |---------------------------------------+
+              |       B2 |--> Vdd                              |
+              |       B1 |--> PGD / TCK                        |
+    +---------| GND   B0 |--> PGC / TDI                        |
+    |         |      Vdd |------------------------------------------< USB 5V
+    |         |      GND |--+----------------------------------+----< USB GND
+    |         |          |  |
+    |         |          |  |
+    |         |       D+ |--|---------------------------------------< USB D+
+    |     +---|       D- |--|---------------------------------------< USB D-
+    |     |   +----------+  |
+    |   ===== C1            |
+    |     |                 |
+    +-----+-----------------+
+
+
+# Driver
+
+Windows 7 and up contain a generic USB driver sufficient for Prog. When the programmer
+is connected to the Windows PC and a driver is asked for, nominate the "windows driver"
+directory in this repo. This will trigger Windows to read the prog.inf file and using
+the information within configure the Prog hardware as a generic USB device. Once
+successful, the Prog-Win command line utility is used to work with the programmer.
+
+

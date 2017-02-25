@@ -1,10 +1,9 @@
-/* 
- * File:   system.h
- * Author: Johan
+/*
+ * Copyright (C) 2017 Johan Bergkvist
  *
- * Created on October 2, 2016, 4:57 PM
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
  */
-
 #ifndef SYSTEM_H
 #define	SYSTEM_H
 
