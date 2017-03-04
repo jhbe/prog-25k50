@@ -1,0 +1,243 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:max680
+LIBS:pic18f25k50
+LIBS:pic18f1330
+LIBS:pic18f2550
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MAX680 IC1
+U 1 1 58BA0133
+P 7800 5000
+F 0 "IC1" H 7950 5600 60  0000 C CNN
+F 1 "MAX680" H 7800 5100 60  0000 C CNN
+F 2 "" H 7600 5100 60  0001 C CNN
+F 3 "" H 7600 5100 60  0001 C CNN
+	1    7800 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L PIC18F25K50 U***1
+U 1 1 58BA01E4
+P 4600 4000
+F 0 "U***1" H 4600 3000 70  0000 C CNN
+F 1 "PIC18F25K50" H 4600 2800 70  0000 C CNN
+F 2 "" H 4600 4000 60  0001 C CNN
+F 3 "" H 4600 4000 60  0001 C CNN
+	1    4600 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C1
+U 1 1 58BA02F5
+P 3100 5350
+F 0 "C1" H 3125 5450 50  0000 L CNN
+F 1 "0.47uF" H 3125 5250 50  0000 L CNN
+F 2 "" H 3138 5200 50  0000 C CNN
+F 3 "" H 3100 5350 50  0000 C CNN
+	1    3100 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C2
+U 1 1 58BA0394
+P 6900 4700
+F 0 "C2" H 6925 4800 50  0000 L CNN
+F 1 "4.7uF" H 6925 4600 50  0000 L CNN
+F 2 "" H 6938 4550 50  0000 C CNN
+F 3 "" H 6900 4700 50  0000 C CNN
+	1    6900 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C3
+U 1 1 58BA03F2
+P 7100 4300
+F 0 "C3" H 7125 4400 50  0000 L CNN
+F 1 "4.7uF" H 7125 4200 50  0000 L CNN
+F 2 "" H 7138 4150 50  0000 C CNN
+F 3 "" H 7100 4300 50  0000 C CNN
+	1    7100 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7800 5650 7800 5550
+Wire Wire Line
+	6900 4550 7300 4550
+Wire Wire Line
+	7300 4750 7300 4850
+Wire Wire Line
+	7300 4850 6900 4850
+Wire Wire Line
+	7100 4550 7100 4450
+Wire Wire Line
+	7100 4150 8300 4150
+Wire Wire Line
+	8300 3300 8300 4700
+Wire Wire Line
+	6000 3400 7800 3400
+Wire Wire Line
+	7800 3400 7800 4250
+Wire Wire Line
+	2900 4000 3200 4000
+NoConn ~ 6000 2600
+NoConn ~ 6000 2800
+NoConn ~ 6000 4600
+NoConn ~ 6000 4800
+NoConn ~ 3200 5000
+NoConn ~ 3200 4800
+NoConn ~ 3200 4600
+NoConn ~ 3200 4400
+NoConn ~ 3200 4200
+NoConn ~ 3200 3800
+NoConn ~ 3200 3600
+NoConn ~ 3200 3400
+NoConn ~ 3200 3200
+NoConn ~ 3200 3000
+NoConn ~ 3200 2800
+NoConn ~ 3200 2600
+NoConn ~ 7300 5050
+NoConn ~ 7300 5250
+NoConn ~ 8300 5100
+Connection ~ 8300 4150
+Text Notes 9550 4100 0    60   ~ 0
+To device to be\nprogrammed.
+Connection ~ 7100 4550
+Wire Wire Line
+	3100 5200 3200 5200
+Wire Wire Line
+	2900 4000 2900 5650
+Wire Wire Line
+	3100 5500 3100 5650
+Connection ~ 3100 5650
+$Comp
+L USB_B P1
+U 1 1 58BA27A4
+P 6600 5300
+F 0 "P1" H 6800 5100 50  0000 C CNN
+F 1 "USB_B" H 6550 5500 50  0000 C CNN
+F 2 "" V 6550 5200 50  0000 C CNN
+F 3 "" V 6550 5200 50  0000 C CNN
+	1    6600 5300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6300 4200 6300 5100
+Wire Wire Line
+	6000 4200 6300 4200
+Wire Wire Line
+	6000 5000 6200 5000
+Wire Wire Line
+	6000 5200 6300 5200
+Wire Wire Line
+	6200 5000 6200 5300
+Wire Wire Line
+	6200 5300 6300 5300
+NoConn ~ 6700 5600
+$Comp
+L CONN_01X08 P2
+U 1 1 58BA30F7
+P 9550 3450
+F 0 "P2" H 9550 3900 50  0000 C CNN
+F 1 "PROG" V 9650 3450 50  0000 C CNN
+F 2 "" H 9550 3450 50  0000 C CNN
+F 3 "" H 9550 3450 50  0000 C CNN
+	1    9550 3450
+	1    0    0    -1  
+$EndComp
+Text Label 8000 3000 0    60   ~ 0
+MCLR
+Text Label 8000 3200 0    60   ~ 0
+TMS
+Text Label 8350 3300 0    60   ~ 0
+Vpp
+Text Label 8000 3600 0    60   ~ 0
+Vdd/TDO
+Text Label 8000 3800 0    60   ~ 0
+PGD/TCK
+Text Label 8000 4000 0    60   ~ 0
+PGC/TDI
+Wire Wire Line
+	9350 3100 9000 3100
+Wire Wire Line
+	9000 3100 9000 3000
+Wire Wire Line
+	9000 3000 6000 3000
+Wire Wire Line
+	9350 3600 9000 3600
+Wire Wire Line
+	9000 3600 9000 4000
+Wire Wire Line
+	9000 4000 6000 4000
+Wire Wire Line
+	9350 3500 8800 3500
+Wire Wire Line
+	8800 3500 8800 3800
+Wire Wire Line
+	8800 3800 6000 3800
+Wire Wire Line
+	9350 3400 8550 3400
+Wire Wire Line
+	8550 3400 8550 3600
+Wire Wire Line
+	8550 3600 6000 3600
+Wire Wire Line
+	8300 3300 9350 3300
+NoConn ~ 9350 3700
+Wire Wire Line
+	9350 3800 9350 5650
+Wire Wire Line
+	9350 5650 2900 5650
+Connection ~ 7800 5650
+Wire Wire Line
+	9350 3200 6000 3200
+Wire Wire Line
+	6300 5400 6100 5400
+Wire Wire Line
+	6000 4400 6100 4400
+Wire Wire Line
+	6100 4400 6100 5650
+Connection ~ 6100 5650
+Connection ~ 6100 5400
+$EndSCHEMATC
